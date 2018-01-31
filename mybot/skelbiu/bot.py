@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -78,12 +79,14 @@ class Advertisement():
         for photo in photos:
             el_photo.send_keys(photo)
         el_being = self.driver.find_element(*self.locators['new']['being'])
-        el_being.click()
+        try:
+            el_being.click()
+        except WebDriverException:
+            pass
         el_phone = self.driver.find_element(*self.locators['new']['phone'])
         el_phone.send_keys(phone)
         el_city = self.driver.find_element(*self.locators['new']['city'])
         el_city.send_keys(city)
-        return
         self.driver.find_element(*self.locators['new']['submit']).submit()
 
 
