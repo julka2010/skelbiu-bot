@@ -5,6 +5,9 @@ import sys
 if __name__ == "__main__":
     main()
 
+here = path.abspath(path.dirname(__file__))
+sys.path.append(here)
+
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mybot.settings")
     try:
