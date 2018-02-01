@@ -20,7 +20,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='skelbiultbot',
-    version='0.1.1',
+    version='0.2.0',
     description='A bot to automate skelbiu.lt',
 #    long_description=long_description,  # Have none for now
     url='https://github.com/julka2010/skelbiu-bot',
@@ -91,9 +91,9 @@ setup(
     #
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
-    entry_points={  # Optional
-#        'console_scripts': [
-#            'sample=sample:main',
-#        ],
+    entry_points={
+        'console_scripts': [
+            'manage-bot=mybot.manage:main',
+       ],
     },
 )
