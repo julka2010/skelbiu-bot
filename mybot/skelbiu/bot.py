@@ -83,10 +83,10 @@ class Advertisement():
         for photo in photos:
             el_photo = self.wait.until(
                 EC.presence_of_element_located(self.locators['new']['photos']))
-                el_photo.send_keys(photo)
-                self.wait.until(EC.invisibility_of_element_located(
-                    self.locators['new']['photos_progress_bar']
-                ))
+            el_photo.send_keys(photo)
+            self.wait.until(EC.invisibility_of_element_located(
+                self.locators['new']['photos_progress_bar']
+            ))
 
         el_being = self.driver.find_element(*self.locators['new']['being'])
         try:
