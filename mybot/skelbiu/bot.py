@@ -49,11 +49,11 @@ class Advertisement():
                 By.XPATH, '//li/span/text()[contains(., "' + category + '")]/..'
             )))
 
-    def __init__(self, driver, wait=10, **kwds):
+    def __init__(self, driver, max_wait=10, **kwds):
         super().__init__(**kwds)
         self.driver = driver
-        self.driver.implicitly_wait(wait)
-        self.wait = WebDriverWait(driver, wait)
+        self.driver.implicitly_wait(max_wait)
+        self.wait = WebDriverWait(driver, 10 * max_wait)
 
     def publish(
             self,
@@ -72,11 +72,13 @@ class Advertisement():
         for subcategory in category:
             el = self._find_category_element(subcategory)
             el.click()
-        el_action = self.wait.until(EC.element_to_be_clickable(self.locators['new']['action']))
+        el_action = self.wait.until(
+            EC.element_to_be_clickable(self.locators['new']['action']))
         el_action.click()
         el_title = self.driver.find_element(*self.locators['new']['title'])
         el_title.send_keys(title)
-        el_description = self.driver.find_element(*self.locators['new']['description'])
+        el_description = self.driver.find_element(
+            *self.locators['new']['description'])
         el_description.send_keys(description)
         el_price = self.driver.find_element(*self.locators['new']['price'])
         el_price.send_keys(price)
