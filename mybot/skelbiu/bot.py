@@ -1,3 +1,5 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
@@ -30,6 +32,8 @@ class Advertisement():
                 'title': (By.XPATH, '//input[@id="adsName"]'),
                 'description': (By.XPATH, '//*[@id="adsDesciption"]'),
                 'photos': (By.XPATH, '//form//input[@type="file"]'),
+                'photos_progress_bar': (
+                    By.XPATH, '//form//*[contains(@class, "progress-bar")]'),
                 'being': (By.XPATH, '//input[@id="privateUser"]'),
                 'price': (By.XPATH, '//input[@id="adsPrice"]'),
                 'phone': (By.XPATH, '//input[@id="adsPhone"]'),
@@ -48,6 +52,7 @@ class Advertisement():
     def __init__(self, driver, wait=10, **kwds):
         super().__init__(**kwds)
         self.driver = driver
+        self.driver.implicitly_wait(wait)
         self.wait = WebDriverWait(driver, wait)
 
     def publish(
@@ -75,16 +80,22 @@ class Advertisement():
         el_description.send_keys(description)
         el_price = self.driver.find_element(*self.locators['new']['price'])
         el_price.send_keys(price)
-        el_photo = self.driver.find_element(*self.locators['new']['photos'])
         for photo in photos:
-            el_photo.send_keys(photo)
+            el_photo = self.wait.until(
+                EC.presence_of_element_located(self.locators['new']['photos']))
+                el_photo.send_keys(photo)
+                self.wait.until(EC.invisibility_of_element_located(
+                    self.locators['new']['photos_progress_bar']
+                ))
+
         el_being = self.driver.find_element(*self.locators['new']['being'])
         try:
             el_being.click()
         except WebDriverException:
             pass
         el_phone = self.driver.find_element(*self.locators['new']['phone'])
-        el_phone.send_keys(phone)
+        el_phone.clear()
+        el_phone.send_keys('+370' + phone)
         el_city = self.driver.find_element(*self.locators['new']['city'])
         el_city.send_keys(city)
         self.driver.find_element(*self.locators['new']['submit']).submit()
