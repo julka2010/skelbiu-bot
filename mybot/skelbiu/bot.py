@@ -2,7 +2,10 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import (
+    WebDriverException,
+    TimeoutException,
+)
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -43,17 +46,23 @@ class Advertisement():
             }
     }
 
-    def _find_category_element(self, category):
+    def _find_category_element(self, depth, category):
+        words = category.split()
+        _xpath_list = 'ul[@data-area="{depth}"]'.format(depth=depth)
+        _xpath_for_words = (
+            'contains(., "' +
+            '") and contains(., "'.join(words) +
+            '")'
+        )
+        _xpath = '//' + _xpath_list + '/li//text()[' + _xpath_for_words + ']/..'
         return self.wait.until(
-            EC.element_to_be_clickable((
-                By.XPATH, '//li/span/text()[contains(., "' + category + '")]/..'
-            )))
+            EC.element_to_be_clickable((By.XPATH, _xpath)))
 
     def __init__(self, driver, max_wait=10, **kwds):
         super().__init__(**kwds)
         self.driver = driver
         self.driver.implicitly_wait(max_wait)
-        self.wait = WebDriverWait(driver, 10 * max_wait)
+        self.wait = WebDriverWait(driver, 3 * max_wait)
 
     def publish(
             self,
@@ -67,10 +76,13 @@ class Advertisement():
             city,
             ):
         if not action.lower() in ("propose", "siūlau"):
-            raise NotImplementedError
+            raise NotImplementedError()
         self.driver.get(self.urls['new'])
-        for subcategory in category:
-            el = self._find_category_element(subcategory)
+        for depth, subcategory in enumerate(category):
+            try:
+                el = self._find_category_element(depth + 1, subcategory)
+            except TimeoutException:
+                raise TimeoutException(subcategory)
             el.click()
         el_action = self.wait.until(
             EC.element_to_be_clickable(self.locators['new']['action']))
