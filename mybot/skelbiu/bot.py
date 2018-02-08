@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import (
+    NoSuchElementException,
     WebDriverException,
     TimeoutException,
 )
@@ -28,22 +29,32 @@ locators = {
     }
 
 class Advertisement():
-    urls = {'new': 'https://www.skelbiu.lt/naujas-skelbimas/'}
+    urls = {
+        'new': 'https://www.skelbiu.lt/naujas-skelbimas/',
+        'my_active_ads': 'https://www.skelbiu.lt/mano-skelbimai/',
+        'my_passive_ads': 'https://www.skelbiu.lt/mano-skelbimai/index.php?mod=myData&action=myAds&tab=1&p=1&tab=0',
+    }
     locators = {
-            'new': {
-                'action': (By.XPATH, '//input[@id="propose"]'),
-                'title': (By.XPATH, '//input[@id="adsName"]'),
-                'description': (By.XPATH, '//*[@id="adsDesciption"]'),
-                'photos': (By.XPATH, '//form//input[@type="file"]'),
-                'photos_progress_bar': (
-                    By.XPATH, '//form//*[contains(@class, "progress-bar")]'),
-                'being': (By.XPATH, '//input[@id="privateUser"]'),
-                'price': (By.XPATH, '//input[@id="adsPrice"]'),
-                'phone': (By.XPATH, '//input[@id="adsPhone"]'),
-                'city': (By.XPATH, '//*[contains(@class, "citiesAreaOneCity")]'),
-                'user_type': (By.XPATH, '//radio[@id="privateUser"]'),
-                'submit': (By.XPATH, '//*[@id="orderButton"]'),
-            }
+        'new': {
+            'action': (By.XPATH, '//input[@id="propose"]'),
+            'title': (By.XPATH, '//input[@id="adsName"]'),
+            'description': (By.XPATH, '//*[@id="adsDesciption"]'),
+            'photos': (By.XPATH, '//form//input[@type="file"]'),
+            'photos_progress_bar': (
+                By.XPATH, '//form//*[contains(@class, "progress-bar")]'),
+            'being': (By.XPATH, '//input[@id="privateUser"]'),
+            'price': (By.XPATH, '//input[@id="adsPrice"]'),
+            'phone': (By.XPATH, '//input[@id="adsPhone"]'),
+            'city': (By.XPATH, '//*[contains(@class, "citiesAreaOneCity")]'),
+            'user_type': (By.XPATH, '//radio[@id="privateUser"]'),
+            'submit': (By.XPATH, '//*[@id="orderButton"]'),
+        },
+        'delete': {
+            'in_list': (By.XPATH, '//a[contains(@class, "deleteLink")]'),
+            'confirm_button': (
+                By.XPATH, '//input[@type="button" and @id="deleteButtonYes"]'
+            )
+        }
     }
 
     def _find_category_element(self, depth, category):
@@ -63,6 +74,30 @@ class Advertisement():
         self.driver = driver
         self.driver.implicitly_wait(max_wait)
         self.wait = WebDriverWait(driver, 3 * max_wait)
+
+    def delete_all(self):
+        def _delete_all_in_list():
+            while True:
+                try:
+                    el_delete_ad = self.driver.find_element(
+                        *self.locators['delete']['in_list']
+                    )
+                except NoSuchElementException:
+                    break
+                else:
+                    try:
+                        el_delete_ad.click()
+                    except WebDriverException:
+                        continue
+                    try:
+                        self.driver.find_element(
+                            *self.locators['delete']['confirm_button']).click()
+                    except (WebDriverException, NoSuchElementException):
+                        continue
+        self.driver.get(self.urls['my_active_ads'])
+        _delete_all_in_list()
+        self.driver.get(self.urls['my_passive_ads'])
+        _delete_all_in_list()
 
     def publish(
             self,
