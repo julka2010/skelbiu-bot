@@ -1,6 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from djmoney.models.fields import MoneyField
+from django.utils.timezone import now
 
 PROPOSE = 'propose'
 LOOKING = 'looking'
@@ -34,16 +35,14 @@ class Advertisement(models.Model):
         choices=ACTION_CHOICES,
         default=PROPOSE,
     )
+    active = models.BooleanField(default=True)
     category = models.CharField(max_length=200)
-    city = models.CharField(max_length=20)
+    city = models.CharField(max_length=20, default='Vilnius')
     description = models.TextField()
     phone = models.ForeignKey(
         PhoneModel,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
+        on_delete=models.PROTECT,
     )
-    publish_until = models.DateField()
     price = MoneyField(decimal_places=2, default_currency='EUR', max_digits=8)
     title = models.CharField(max_length=200)
 
