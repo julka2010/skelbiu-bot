@@ -27,7 +27,7 @@ class AdvertisementAdmin(admin.ModelAdmin):
     def make_inactive(self, request, queryset):
         queryset.update(active=False)
         self.message_success(request)
-    make_inactive.short_description = "Ignore selected ads"
+    make_inactive.short_description = "Mark selected ads for deleting"
 
 
 admin.site.register(Advertisement, AdvertisementAdmin)
