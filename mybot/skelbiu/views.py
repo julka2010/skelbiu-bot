@@ -16,6 +16,7 @@ def run_bot(request):
     driver = webdriver.Chrome()
     bot.login(driver)
     skelbiu = bot.Advertisement(driver)
+    skelbiu.delete_all()
     ads_to_publish_list = Advertisement.objects.all().filter(active=True)
     failed_ads = []
     with open('errors_log.csv', 'w') as errors_file:
