@@ -29,6 +29,19 @@ class PhoneModel(models.Model):
         return self.phone_number
 
 
+class SkelbiuAccount(models.Model):
+    phone = models.ForeignKey(
+        PhoneModel,
+        on_delete=models.PROTECT,
+    )
+    email = models.EmailField(null=True)
+    login = models.CharField(max_length=20)
+    password = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.login
+
+
 class Advertisement(models.Model):
     action = models.CharField(
         max_length=8,
@@ -39,9 +52,10 @@ class Advertisement(models.Model):
     category = models.CharField(max_length=200)
     city = models.CharField(max_length=20, default='Vilnius')
     description = models.TextField()
-    phone = models.ForeignKey(
-        PhoneModel,
+    skelbiu_account = models.ForeignKey(
+        SkelbiuAccount,
         on_delete=models.PROTECT,
+        related_name='advertisements',
     )
     price = MoneyField(decimal_places=2, default_currency='EUR', max_digits=8)
     title = models.CharField(max_length=200)

@@ -15,11 +15,6 @@ urls = {
     'login': 'https://www.skelbiu.lt/users/signin',
 }
 
-credentials = {
-    'username': 'bin.trash+skelbiu@protonmail.com',
-    'password': '8*NM5nKrF2WbRXSfFJpf',
-}
-
 locators = {
     'login': {
         'username': (By.XPATH, '//*[@id="user"]/input'),
@@ -150,11 +145,11 @@ class Advertisement():
         self.driver.find_element(*self.locators['new']['submit']).submit()
 
 
-def login(driver):
+def login(driver, username, password):
     driver.get(urls['login'])
     username_field = driver.find_element(*locators['login']['username'])
-    username_field.send_keys(credentials['username'])
+    username_field.send_keys(username)
     password_field = driver.find_element(*locators['login']['password'])
-    password_field.send_keys(credentials['password'])
+    password_field.send_keys(password)
     submit_button = driver.find_element(*locators['login']['submit'])
     return submit_button.submit()
