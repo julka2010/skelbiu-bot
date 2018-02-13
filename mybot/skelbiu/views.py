@@ -1,4 +1,4 @@
-import csv
+import json
 import sys
 import traceback
 
@@ -23,24 +23,7 @@ def run_bot(request):
         skelbiu.delete_all()
         ads_to_publish_list = skelbiu_acc.advertisements.filter(active=True)
         with open('errors_log.csv', 'w') as errors_file:
-            writer = csv.DictWriter(
-                errors_file,
-                dialect='excel',
-                fieldnames=[
-                    'title',
-                    'exc_type',
-                    'exc_value',
-                    'exc_traceback',
-                    'action',
-                    'category',
-                    'phone',
-                    'city',
-                    'price',
-                    'description',
-                    'photos',
-                    ]
-            )
-            writer.writeheader()
+            errors_file.write('[\n')
             for ad in ads_to_publish_list:
                 images = ad.images.all()
                 images_path = [t.image.path for t in images]
@@ -63,6 +46,7 @@ def run_bot(request):
                     ad_info['exc_value'] = exc_value
                     ad_info['exc_traceback'] = ''.join(
                         traceback.format_tb(exc_traceback))
-                    writer.writerow(ad_info)
+                    errors_file.write('{obj},\n'.format(obj=json.dumps(ad_info)))
                     continue
+            errors_file.write(']\n')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
