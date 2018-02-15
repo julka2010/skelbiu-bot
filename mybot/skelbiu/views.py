@@ -17,11 +17,14 @@ from .models import (
 
 def run_bot(request):
     for skelbiu_acc in SkelbiuAccount.objects.all():
+        ads_to_publish_list = skelbiu_acc.advertisements.filter(active=True)
+        #Skip accounts having no active ads
+        if not ads_to_publish_list:
+            continue
         driver = webdriver.Chrome()
         bot.login(driver, skelbiu_acc.login, skelbiu_acc.password)
         skelbiu = bot.Advertisement(driver)
         skelbiu.delete_all()
-        ads_to_publish_list = skelbiu_acc.advertisements.filter(active=True)
         with open('errors_log.csv', 'w') as errors_file:
             errors_file.write('[\n')
             for ad in ads_to_publish_list:
@@ -32,7 +35,7 @@ def run_bot(request):
                     'category': ad.category_as_list,
                     'city': ad.city,
                     'description': ad.description,
-                    'phone': ad.phone.phone_number,
+                    'phone': ad.skelbiu_account.phone.phone_number,
                     'photos': images_path,
                     'price': str(ad.price),
                     'title': ad.title,
@@ -46,7 +49,9 @@ def run_bot(request):
                     ad_info['exc_value'] = exc_value
                     ad_info['exc_traceback'] = ''.join(
                         traceback.format_tb(exc_traceback))
+                    ad_info = {k: str(v) for k, v in ad_info}
                     errors_file.write('{obj},\n'.format(obj=json.dumps(ad_info)))
                     continue
             errors_file.write(']\n')
+        driver.close()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
