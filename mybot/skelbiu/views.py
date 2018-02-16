@@ -21,7 +21,7 @@ def run_bot(request):
         #Skip accounts having no active ads
         if not ads_to_publish_list:
             continue
-        driver = webdriver.Chrome()
+        driver = webdriver.Firefox()
         bot.login(driver, skelbiu_acc.login, skelbiu_acc.password)
         skelbiu = bot.Advertisement(driver)
         skelbiu.delete_all()

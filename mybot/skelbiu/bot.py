@@ -42,7 +42,7 @@ class Advertisement():
             'phone': (By.XPATH, '//input[@id="adsPhone"]'),
             'city': (By.XPATH, '//*[contains(@class, "citiesAreaOneCity")]'),
             'user_type': (By.XPATH, '//radio[@id="privateUser"]'),
-            'submit': (By.XPATH, '//*[@id="orderButton"]'),
+            'submit': (By.XPATH, '//*[@id="orderButton"]/a'),
         },
         'delete': {
             'in_list': (By.XPATH, '//a[contains(@class, "deleteLink")]'),
@@ -131,7 +131,6 @@ class Advertisement():
             self.wait.until(EC.invisibility_of_element_located(
                 self.locators['new']['photos_progress_bar']
             ))
-
         el_being = self.driver.find_element(*self.locators['new']['being'])
         try:
             el_being.click()
@@ -143,6 +142,10 @@ class Advertisement():
         el_city = self.driver.find_element(*self.locators['new']['city'])
         el_city.send_keys(city)
         self.driver.find_element(*self.locators['new']['submit']).submit()
+        try:
+            self.driver.find_element(By.XPATH, '//form[@id="submitForm"]').submit()
+        except NoSuchElementException:
+            pass
 
 
 def login(driver, username, password):
