@@ -59,11 +59,11 @@ class SkelbiuLtBot():
         return self.wait.until(
             EC.element_to_be_clickable((By.XPATH, _xpath)))
 
-    def __init__(self, driver, max_wait=10, **kwds):
+    def __init__(self, driver=None, max_wait=10, **kwds):
         super().__init__(**kwds)
-        self.driver = driver
+        self.driver = driver or webdriver.Firefox()
         self.driver.implicitly_wait(max_wait)
-        self.wait = WebDriverWait(driver, 3 * max_wait)
+        self.wait = WebDriverWait(self.driver, 3 * max_wait)
 
     def delete_all_ads(self):
         def _delete_all_in_list():

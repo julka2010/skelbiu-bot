@@ -7,7 +7,6 @@ from django.shortcuts import (
     render,
     redirect
 )
-from selenium import webdriver
 
 from . import bot
 from .models import (
@@ -21,8 +20,7 @@ def run_bot(request):
         #Skip accounts having no active ads
         if not ads_to_publish_list:
             continue
-        driver = webdriver.Firefox()
-        skelbiu = bot.SkelbiuLtBot(driver)
+        skelbiu = bot.SkelbiuLtBot()
         skelbiu.login(skelbiu_acc.login, skelbiu_acc.password)
         skelbiu.delete_all_ads()
         with open('errors_log.csv', 'w') as errors_file:
@@ -51,6 +49,7 @@ def run_bot(request):
                         traceback.format_tb(exc_traceback))
                     ad_info = {k: str(v) for k, v in ad_info.items()}
                     errors_file.write('{obj},\n'.format(obj=json.dumps(ad_info)))
+                    raise
                     continue
             errors_file.write(']\n')
         driver.close()
