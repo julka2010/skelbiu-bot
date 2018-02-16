@@ -49,7 +49,7 @@ def run_bot(request):
                     ad_info['exc_value'] = exc_value
                     ad_info['exc_traceback'] = ''.join(
                         traceback.format_tb(exc_traceback))
-                    ad_info = {k: str(v) for k, v in ad_info}
+                    ad_info = {k: str(v) for k, v in ad_info.items()}
                     errors_file.write('{obj},\n'.format(obj=json.dumps(ad_info)))
                     continue
             errors_file.write(']\n')
