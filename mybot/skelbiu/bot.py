@@ -11,25 +11,25 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-urls = {
-    'login': 'https://www.skelbiu.lt/users/signin',
-}
-
-locators = {
-    'login': {
-        'username': (By.XPATH, '//*[@id="user"]/input'),
-        'password': (By.XPATH, '//input[@id="password"]'),
-        'submit': (By.XPATH, '//input[@type="submit"]'),
-        }
-    }
-
-class Advertisement():
+class SkelbiuLtBot():
     urls = {
+        'login': 'https://www.skelbiu.lt/users/signin',
         'new': 'https://www.skelbiu.lt/naujas-skelbimas/',
         'my_active_ads': 'https://www.skelbiu.lt/mano-skelbimai/',
         'my_passive_ads': 'https://www.skelbiu.lt/mano-skelbimai/index.php?mod=myData&action=myAds&tab=1&p=1&tab=0',
     }
     locators = {
+        'delete': {
+            'in_list': (By.XPATH, '//a[contains(@class, "deleteLink")]'),
+            'confirm_button': (
+                By.XPATH, '//input[@type="button" and @id="deleteButtonYes"]'
+            )
+        },
+        'login': {
+            'username': (By.XPATH, '//*[@id="user"]/input'),
+            'password': (By.XPATH, '//input[@id="password"]'),
+            'submit': (By.XPATH, '//input[@type="submit"]'),
+        },
         'new': {
             'action': (By.XPATH, '//input[@id="propose"]'),
             'title': (By.XPATH, '//input[@id="adsName"]'),
@@ -43,13 +43,8 @@ class Advertisement():
             'city': (By.XPATH, '//*[contains(@class, "citiesAreaOneCity")]'),
             'user_type': (By.XPATH, '//radio[@id="privateUser"]'),
             'submit': (By.XPATH, '//*[@id="orderButton"]/a'),
+            'submit_chosen_payables': (By.XPATH, '//form[@id="submitForm"]'),
         },
-        'delete': {
-            'in_list': (By.XPATH, '//a[contains(@class, "deleteLink")]'),
-            'confirm_button': (
-                By.XPATH, '//input[@type="button" and @id="deleteButtonYes"]'
-            )
-        }
     }
 
     def _find_category_element(self, depth, category):
@@ -70,7 +65,7 @@ class Advertisement():
         self.driver.implicitly_wait(max_wait)
         self.wait = WebDriverWait(driver, 3 * max_wait)
 
-    def delete_all(self):
+    def delete_all_ads(self):
         def _delete_all_in_list():
             while True:
                 try:
@@ -94,7 +89,18 @@ class Advertisement():
         self.driver.get(self.urls['my_passive_ads'])
         _delete_all_in_list()
 
-    def publish(
+    def login(self, username, password):
+        self.driver.get(self.urls['login'])
+        username_field = self.driver.find_element(*self.locators['login']['username'])
+        username_field.clear()
+        username_field.send_keys(username)
+        password_field = self.driver.find_element(*self.locators['login']['password'])
+        password_field.clear()
+        password_field.send_keys(password)
+        submit_button = self.driver.find_element(*self.locators['login']['submit'])
+        return submit_button.submit()
+
+    def publish_ad(
             self,
             category,
             action,
@@ -143,16 +149,7 @@ class Advertisement():
         el_city.send_keys(city)
         self.driver.find_element(*self.locators['new']['submit']).submit()
         try:
-            self.driver.find_element(By.XPATH, '//form[@id="submitForm"]').submit()
+            self.driver.find_element(
+                *self.locators['new']['submit_chosen_payables']).submit()
         except NoSuchElementException:
             pass
-
-
-def login(driver, username, password):
-    driver.get(urls['login'])
-    username_field = driver.find_element(*locators['login']['username'])
-    username_field.send_keys(username)
-    password_field = driver.find_element(*locators['login']['password'])
-    password_field.send_keys(password)
-    submit_button = driver.find_element(*locators['login']['submit'])
-    return submit_button.submit()

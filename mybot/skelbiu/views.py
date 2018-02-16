@@ -22,9 +22,9 @@ def run_bot(request):
         if not ads_to_publish_list:
             continue
         driver = webdriver.Firefox()
-        bot.login(driver, skelbiu_acc.login, skelbiu_acc.password)
-        skelbiu = bot.Advertisement(driver)
-        skelbiu.delete_all()
+        skelbiu = bot.SkelbiuLtBot(driver)
+        skelbiu.login(skelbiu_acc.login, skelbiu_acc.password)
+        skelbiu.delete_all_ads()
         with open('errors_log.csv', 'w') as errors_file:
             errors_file.write('[\n')
             for ad in ads_to_publish_list:
@@ -41,7 +41,7 @@ def run_bot(request):
                     'title': ad.title,
                 }
                 try:
-                    skelbiu.publish(**ad_info)
+                    skelbiu.publish_ad(**ad_info)
                 except Exception:
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     ad_info['photos'] = '\r\n'.join(ad_info['photos'])
