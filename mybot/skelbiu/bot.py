@@ -8,6 +8,10 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.proxy import (
+    Proxy,
+    ProxyType,
+)
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -47,6 +51,13 @@ class SkelbiuLtBot():
         },
     }
 
+    @property
+    def default_driver(self, host='localhost', port='9050'):
+        options = webdriver.ChromeOptions()
+        options.add_argument('--proxy-server=socks5://' + host + ':' + port)
+        return webdriver.Chrome(chrome_options=options)
+
+
     def _find_category_element(self, depth, category):
         words = category.split()
         _xpath_list = 'ul[@data-area="{depth}"]'.format(depth=depth)
@@ -61,7 +72,7 @@ class SkelbiuLtBot():
 
     def __init__(self, driver=None, max_wait=10, **kwds):
         super().__init__(**kwds)
-        self.driver = driver or webdriver.Firefox()
+        self.driver = driver or self.default_driver
         self.driver.implicitly_wait(max_wait)
         self.wait = WebDriverWait(self.driver, 3 * max_wait)
 
