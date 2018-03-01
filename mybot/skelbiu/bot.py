@@ -52,9 +52,13 @@ class SkelbiuLtBot():
     }
 
     @property
-    def default_driver(self, host='localhost', port='9050'):
+    def default_driver(self, list_chrome_driver_options=None):
+        list_chrome_driver_options = list_chrom_driver_options or [
+            '--headless',
+        ]
         options = webdriver.ChromeOptions()
-        options.add_argument('--proxy-server=socks5://' + host + ':' + port)
+        for arg in list_chrome_driver_options:
+            options.add_argument(arg)
         return webdriver.Chrome(chrome_options=options)
 
 
