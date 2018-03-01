@@ -52,5 +52,4 @@ def run_bot(request):
                     raise
                     continue
             errors_file.write(']\n')
-        driver.close()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
