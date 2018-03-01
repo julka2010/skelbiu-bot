@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from .models import (
     Advertisement,
     AdvertisementImage,
+    SkelbiuAccount,
     PhoneModel,
 )
 
@@ -36,3 +37,4 @@ class AdvertisementAdmin(admin.ModelAdmin):
 
 admin.site.register(Advertisement, AdvertisementAdmin)
 admin.site.register(PhoneModel)
+admin.site.register(SkelbiuAccount)
