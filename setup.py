@@ -20,7 +20,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='skelbiultbot',
-    version='0.8.2',
+    version='0.8.3',
     description='A bot to automate skelbiu.lt',
 #    long_description=long_description,  # Have none for now
     url='https://github.com/julka2010/skelbiu-bot',
