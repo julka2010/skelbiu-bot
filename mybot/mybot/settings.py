@@ -25,7 +25,7 @@ SECRET_KEY = '_fqs2!vt=!uidf^d3!a9^i6$@&^49du_fj^x^-f2(w!khq58*a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'server01']
+ALLOWED_HOSTS = ['localhost', 'server01', 'xvm-110-253.dc2.ghst.net']
 
 
 # Application definition
