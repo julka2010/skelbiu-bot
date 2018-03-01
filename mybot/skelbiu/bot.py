@@ -53,7 +53,7 @@ class SkelbiuLtBot():
 
     @property
     def default_driver(self, list_chrome_driver_options=None):
-        list_chrome_driver_options = list_chrom_driver_options or [
+        list_chrome_driver_options = list_chrome_driver_options or [
             '--headless',
         ]
         options = webdriver.ChromeOptions()
